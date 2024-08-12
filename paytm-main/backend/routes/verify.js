@@ -2,7 +2,7 @@ const z = require('zod');
 const express = require('express');
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
-const User = require('../db');
+const { User } = require('../db');
 const { Json_secret } = require('../config');
 
 const zodUsersignup = z.object({

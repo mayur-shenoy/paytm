@@ -8,19 +8,29 @@ const { Json_secret } = require('../config');
 const zod = require("zod");
 
 const { UserVerify, UsersigninVerify } = require('./verify');
-const User = require('../db');
+
 const Auth = require('./auth');
+const { User, Bank } = require('../db');
+
 const updateBody = zod.object({
     password: zod.string().min(8).optional(),
     firstName: zod.string().optional(),
     lastName: zod.string().optional(),
 })
-
+function randomNumber(min, max) {
+    return Math.random() * (max - min) + min;
+}
 
 userRouter.post('/signup', UserVerify, async (req, res) => {
     const NewUser = req.body;
     const NewUser1 = await User.create(NewUser);
+    const userId = NewUser1._id;
+    await Bank.create({
+        userId,
+        balance: randomNumber(1, 10000)
+    })
     const jwtToken = jwt.sign({ userId: NewUser1._id }, Json_secret);
+
     res.status(200).json({
         msg: "User created successfully",
         jwt: jwtToken
